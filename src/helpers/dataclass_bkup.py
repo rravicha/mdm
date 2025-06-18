@@ -16,19 +16,10 @@ class S3:
     file_name: str = field(default=None, metadata={"optional": True})
 
 @dataclass
-class Resources:
-    source: Any
-    target: Any
-    def __post_init__(self):
-        if not isinstance(self.source, (S3, Athena)):
-            raise TypeError("source must be an instance of S3 or Athena")
-    
-@dataclass
 class Raw:
     load_type: str = field(default="full", metadata={"optional": True})
     source: Athena = field(default_factory=Athena)
     target: S3 = field(default_factory=S3)
-    
 @dataclass
 class Trusted:
     load_type: str = field(default="full", metadata={"optional": True})
@@ -51,20 +42,18 @@ class Dnb:
     hcp: HCP = field(default_factory=HCP)
 
 
+
 @dataclass
 class Pipeline:
     dnb: Dnb = field(default_factory=Dnb)
 
     def to_dict(self) -> Dict[str, Any]:
         return asdict(self)
-    
-def load_pipeline_from_yaml(file_path: str) -> Pipeline:
-    with open(file_path, 'r') as yaml_file:
-        config_data = yaml.safe_load(yaml_file)
-    return Pipeline(**config_data)
 
-# Load the YAML file and display the dictionary
-pipeline = load_pipeline_from_yaml('/workspaces/mdm/metadata/config_dev.yaml')
-print(pipeline.to_dict())
+# Usage example
+pip = Pipeline()
 
+pip_yaml = yaml.dump(pip.to_dict(), default_flow_style=False)
+
+print(pip_yaml)
 

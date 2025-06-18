@@ -1,0 +1,47 @@
+dnb:
+  hco:
+    raw:
+      load_type: full
+      source:
+        database: adl_enriched_gbl_cf_ebx
+        table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+        type: athena
+      target:
+        bucket: adl-base-customer-mdm-etl-dev-226aog
+        file_name: null
+        prefix: /raw/FS_DNB/
+        type: file
+    trusted:
+      load_type: full
+      source:
+        database: adl_enriched_gbl_cf_ebx
+        table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+        type: athena
+      target:
+        bucket: adl-base-customer-mdm-etl-dev-226aog
+        file_name: null
+        prefix: /raw/FS_DNB/
+        type: file
+  hcp:
+    raw:
+      load_type: full
+      source:
+        database: adl_enriched_gbl_cf_ebx
+        table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+        type: athena
+      target:
+        bucket: adl-base-customer-mdm-etl-dev-226aog
+        file_name: null
+        prefix: /raw/FS_DNB/
+        type: file
+    trusted:
+      load_type: full
+      source:
+        database: adl_enriched_gbl_cf_ebx
+        table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+        type: athena
+      target:
+        bucket: adl-base-customer-mdm-etl-dev-226aog
+        file_name: null
+        prefix: /raw/FS_DNB/
+        type: file
