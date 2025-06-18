@@ -14,7 +14,14 @@ class S3:
     bucket: str = "adl-base-customer-mdm-etl-dev-226aog"
     prefix: str = "/raw/FS_DNB/"
     file_name: str = field(default=None, metadata={"optional": True})
-
+@dataclass
+class Resources:
+    s3: S3 = field(default=None, metadata={"optional": True})
+    source: Any
+    target: Any
+    def __post_init__(self):
+        if not isinstance(self.source, (S3, Athena, Api)):
+            raise TypeError("source must be an instance of S3 or Athena")
 @dataclass
 class Raw:
     load_type: str = field(default="full", metadata={"optional": True})
