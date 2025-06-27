@@ -5,7 +5,7 @@ sys.path.append("/workspaces/mdm")
 from src.helpers.data import Data
 from src.helpers.dataclass import create_pipeline
 @dataclass
-class Config:
+class Config1:
     source: str
     entity: str
     layer: str

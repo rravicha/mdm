@@ -30,7 +30,7 @@ class Enriched:
         log.info("Reading Job Parameter")
         self.env=Params(self.args).get('env',default_value='notset')
         self.configpath=Params(self.args).get('configpath',default_value='notset')
-        self.tstpath=Params(self.args).get('tstpath',default_value='notset')
+        self.tstpath=Params(self.args).get('tstpath',default_value='/workspaces/mdm/bucket/trusted/FS_DNB/DNB_CUST_ADDR_COMB')
         self.enrpath=Params(self.args).get('enrpath',default_value='notset')
 
         self.dnb_tst_path = f"s3://{self.tstpath}/FS_DNB/DNB_CUST_ADDR_COMB"

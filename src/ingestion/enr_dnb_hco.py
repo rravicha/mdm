@@ -1,35 +1,33 @@
-
+import os
 import boto3
-import sys
-from src.helpers.data import Data
-from src.helpers.logger import Logger
-from src.helpers.args import Enriched
+import json
+from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, struct, collect_list, lit, array, from_json, when, concat, regexp_replace
 from pyspark.sql.types import StringType, ArrayType, StructType, MapType
-log = Logger.get_logger(__name__)
-import os
-from src.helpers.mock_s3 import MockS3Client
 
-# Initialize S3 client based on environment
-if os.getenv('ENV') == None:
-    s3_client = MockS3Client()
-else:
-    import boto3
-    s3_client = boto3.client('s3')
+# Initialize Spark session with S3 access
+s3_client = boto3.client('s3')
+spark = SparkSession.builder \
+    .appName("ParquetToJSON") \
+    .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem") \
+    .config("spark.hadoop.fs.s3a.aws.credentials.provider", "com.amazonaws.auth.DefaultAWSCredentialsProviderChain") \
+    .getOrCreate()
 
-# ...existing code...
 # S3 path to your Parquet file
-# hco_comb_trusted = "s3://adl-base-customer-md-9b69xa1sw6t9jtkd3azyi3rjois1huse1b-s3alias/trusted/FS_DNB/DNB_CUST_ADDR_COMB/"
-# hco_comb_enriched = "s3://adl-base-customer-md-zjgnb31idg7ozb8ttimo3zojpuffguse1b-s3alias/enriched/FS_DNB/"
+hco_comb_trusted = "s3://adl-base-customer-md-9b69xa1sw6t9jtkd3azyi3rjois1huse1b-s3alias/trusted/FS_DNB/DNB_CUST_ADDR_COMB/"
+hco_comb_enriched = "s3://adl-base-customer-md-zjgnb31idg7ozb8ttimo3zojpuffguse1b-s3alias/enriched/FS_DNB/"
 
 
 # HCO Process
 try:
-    dnb_tst_path, dnb_enr_path, base_bucket, dnb_enr_prefix = Enriched(sys.argv).get_dnb_enr_args()
-    log.info("Read data from Trusted Layer")
-    hco_df = Data.read('file', dnb_tst_path)
+    # Read the Parquet file from S3
+    hco_df = spark.read.parquet(hco_comb_trusted)
 
-    log.info("Original Schema:")
+    # Replace nulls with empty strings for all columns
+#    hco_df = hco_df.select([when(col(c).isNull(), None).otherwise(col(c)).alias(c) for c in hco_df.columns])
+
+    # Print the original schema
+    print("Original Schema:")
     hco_df.printSchema()
 
     # Transformation logic
@@ -268,48 +266,68 @@ try:
 
 
     # Print DF type
-    log.info(type(hco_transformed_df))
+    print(type(hco_transformed_df))
 
     # Collect and print one row to check the structure
-    log.info(hco_transformed_df.take(1))
+    print(hco_transformed_df.take(1))
 
     # Print the schema after transformations
-    log.info("\nSchema after transformations:")
+    print("\nSchema after transformations:")
     hco_transformed_df.printSchema()
     hco_transformed_df=hco_transformed_df.limit(10)
-    # hco_transformed_df.repartition(5).write.mode("overwrite").json(hco_comb_enriched)
-    Data.write('json', hco_transformed_df, dnb_enr_path)
+    hco_transformed_df.repartition(5).write.mode("overwrite").json(hco_comb_enriched)
+    print(f"*"*15, "HCO Json Enriched Load Complete", "*"*15)
+    print(f"*"*15, "HCO Cosmetic Changes Start", "*"*15)
+    s3_bucket = "adl-base-customer-mdm-etl-dev-226aog"
+    prefix = "enriched/FS_DNB"  # S3 folder path
 
 # List all objects in the folder
-    json_files = s3_client.list_objects_v2(Bucket=base_bucket, Prefix=dnb_enr_prefix)
+    json_files = s3_client.list_objects_v2(Bucket=s3_bucket, Prefix=prefix)
     if 'Contents' in json_files:
         json_files = [obj['Key'] for obj in json_files['Contents'] if obj['Key'].endswith('.json')]
 
 
-    log.info(f"json files: {json_files}")
+    print(f"json files: {json_files}")
 
     for s3_key in json_files:
-        response = s3_client.get_object(Bucket=base_bucket, Key=s3_key)
+        response = s3_client.get_object(Bucket=s3_bucket, Key=s3_key)
         original_content = response['Body'].read().decode('utf-8')
         modified_content = original_content.strip().replace('\n', ',')
-        log.info(f"length of modified_content: {len(modified_content)}")
+        print(f"length of modified_content: {len(modified_content)}")
         modified_content2 = f"[{','.join(modified_content)}]"
         modified_content3 = f"[{''.join(modified_content)}]"
-        log.info(f"original_content: {original_content}")
-        log.info(f"modified_content: {modified_content}")
-        log.info(f"modified_content2: {modified_content2}")
-        log.info(f"modified_content3: {modified_content3}")
+        print(f"original_content: {original_content}")
+        print(f"modified_content: {modified_content}")
+        print(f"modified_content2: {modified_content2}")
+        print(f"modified_content3: {modified_content3}")
 
         s3_client.put_object(
-            Bucket=base_bucket,
+            Bucket=s3_bucket,
             Key=s3_key,
             Body=modified_content3.encode('utf-8'), # Encode back to bytes
             ContentType='application/json' # Assuming it's still intended to be JSON
         )
 
-except Exception as error:
-    log.error(f"Unable to buil/write enriched: {str(error)}")
-    raise Exception(error)
+    # for json_file in json_files:
+    #     json_content = []
+    #     with open(json_file, 'r') as file:
+    #         content = file.read().strip().replace('\n', ',')
+    #         json_content.append(content)
+
+    #     # Enclose the entire JSON content with an array
+    #     final_json = f"[{','.join(json_content)}]"
+    #     print(f"final_json: {final_json}")
+    #     print(f"*"*15, "-", "*"*15)
+
+
+    #     with open(json_file, 'w') as file:
+    #         file.write(final_json)
+
+
+except Exception as e:
+    print(f"HCO Exception: {e}")
+    raise(e)
 
 finally:
-    log.info("Execution Complete!")
+    print("Finally Block")
+    # spark.stop() # Uncomment this line if you want to stop the Spark session after the HCO process
