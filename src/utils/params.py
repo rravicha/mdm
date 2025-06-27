@@ -1,6 +1,14 @@
 """get glue parameters"""
 
-from awsglue.utils import getResolvedOptions
+try:
+    # Try importing AWS Glue libraries first
+    from awsglue.context import GlueContext
+    from awsglue.job import Job
+    from awsglue.utils import getResolvedOptions
+    is_glue = True
+except ImportError:
+    # Fall back to regular PySpark for local development
+    is_glue = False
 
 
 class Params(object):

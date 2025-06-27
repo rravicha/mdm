@@ -1,14 +1,84 @@
-sap:
+dnb:
   hco:
     raw:
-      source:
-        athena:
+      resource:
+        source:
           database: adl_enriched_gbl_cf_ebx
           table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
           type: athena
-      target:
-        s3:
+        target:
           bucket: adl-base-customer-mdm-etl-dev-226aog
           file_name: null
           prefix: /raw/FS_DNB/
           type: file
+    trusted:
+      resource:
+        source:
+          database: adl_enriched_gbl_cf_ebx
+          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+          type: athena
+        target:
+          bucket: adl-base-customer-mdm-etl-dev-226aog
+          file_name: null
+          prefix: /raw/FS_DNB/
+          type: file
+sap:
+  hco:
+    raw:
+      resource:
+        source:
+          database: adl_enriched_gbl_cf_ebx
+          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+          type: athena
+        target:
+          bucket: adl-base-customer-mdm-etl-dev-226aog
+          file_name: null
+          prefix: /raw/FS_DNB/
+          type: file
+    trusted:
+      resource:
+        source:
+          database: adl_enriched_gbl_cf_ebx
+          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+          type: athena
+        target:
+          bucket: adl-base-customer-mdm-etl-dev-226aog
+          file_name: null
+          prefix: /raw/FS_DNB/
+          type: file
+  hcp:
+    raw:
+      resource:
+        source:
+          database: adl_enriched_gbl_cf_ebx
+          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
+          type: athena
+        target:
+          bucket: adl-base-customer-mdm-etl-dev-226aog
+          file_name: null
+          prefix: /raw/FS_DNB/
+          type: file
+    trusted:
+      resource:
+        source:
+          bucket: adl-base-customer-mdm-etl-dev-226aog
+          file_name: "metdata.json"
+          prefix: /raw/FS_DNB/
+          type: athena
+          query: "SELECT * FROM adl_enriched_gbl_cf_ebx.ebx_hierarchy_hierarchy_dunAndBradstreetAccounts WHERE entityType = 'HCP'"
+        target:
+          type: api
+          secrets: adl-customer-mdm-secret-dev
+          url : https://dev.api.alcon.com/reltio-exp-sys/api/triggerLoad
+    enriched:
+      resource:
+        source:
+          bucket: adl-base-customer-mdm-etl-dev-226aog
+          file_name: "metdata.json"
+          prefix: /raw/FS_DNB/
+          type: athena
+          query: "SELECT * FROM adl_enriched_gbl_cf_ebx.ebx_hierarchy_hierarchy_dunAndBradstreetAccounts WHERE entityType = 'HCP'"
+        target:
+          type: "Mulesoft API"
+          secrets: adl-customer-mdm-secret-dev
+          url : https://dev.api.alcon.com/reltio-exp-sys/api/triggerLoad

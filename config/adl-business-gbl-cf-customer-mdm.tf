@@ -79,6 +79,8 @@ locals {
             "--job-bookmark-option"       = "job-bookmark-disable"
             "--extra-py-files"            = "s3://${var.artifact_bucket}/adl-customer-mdm-etl/releases/${var.artifacts_version}/adl_Customer_MDM_ETL-1.0.0-py3.6.egg"
             "--env"                       = "${var.environment}"
+            "--test_path"                 = "${local.tfstate_dp["adl-customer-mdm-etl/adl-trusted-gbl-cf-customer-mdm"].bucket.id}"
+            "--test_path_alias"           = "s3://${var.access_point.alias}/trusted/"
             //"--datalake-formats"          = "iceberg"
             //"--conf"                      = "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions --conf spark.sql.catalog.iceberg_data_catalog=org.apache.iceberg.spark.SparkCatalog --conf spark.sql.catalog.iceberg_data_catalog.warehouse=\"${local.tfstate_dp["adl-reference-etl/adl-enriched-gbl-cf-reference"].bucket.id}\" --conf spark.sql.catalog.iceberg_data_catalog.catalog-impl=org.apache.iceberg.aws.glue.GlueCatalog --conf spark.sql.catalog.iceberg_data_catalog.io-impl=org.apache.iceberg.aws.s3.S3FileIO"
           }

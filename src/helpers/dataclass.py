@@ -1,139 +1,111 @@
-from dataclasses import dataclass, asdict, field
-from typing import Dict, Any
-import yaml
-import json
-
+from dataclasses import dataclass, field
+from typing import List, Optional, Dict, Any
 
 @dataclass
-class Athena:
-    type: str = "athena"
-    database: str = None
-    table: str = None
-    query: str = field(default=None, metadata={"optional": True})
-
-@dataclass
-class S3:
-    type: str = "file"
-    bucket: str = None
-    prefix: str = None
-    file_name: str = field(default=None, metadata={"optional": True})
-@dataclass
-class Api:
+class ApiConfig:
+    s3_prefix: Optional[str] = None
     type: str = "api"
-    secrets: str = None
-    url : str = None
-    
-### AWS resources can be aadded above this line if needed ###
-    
 
 @dataclass
-class Raw:
-    athena: Athena = field(default_factory=Athena, metadata={"optional": True})
-    s3: S3 = field(default_factory=S3, metadata={"optional": True})
-    api: Api = field(default_factory=Api, metadata={"optional": True})
+class AthenaConfig:
+    database: Optional[str] = None
+    table: Optional[str] = None
+    type: str = "athena"
+    query: Optional[str] = None
+
 @dataclass
-class Trusted:
-    athena: Athena = field(default_factory=Athena, metadata={"optional": True})
-    s3: S3 = field(default_factory=S3, metadata={"optional": True})
-    api: Api = field(default_factory=Api, metadata={"optional": True})
+class FileConfig:
+    bucket: Optional[str] = None
+    prefix: Optional[str] = None
+    type: str = "s3"
+    format: Optional[str] = "parquet"
+    file_name: Optional[str] = None
+
 @dataclass
-class Enriched:
-    athena: Athena = field(default_factory=Athena, metadata={"optional": True})
-    s3: S3 = field(default_factory=S3, metadata={"optional": True})
-    api: Api = field(default_factory=Api, metadata={"optional": True})
-    
+class SourceConfig:
+    api: Optional[ApiConfig] = None
+    file: Optional[FileConfig] = None
+    athena: Optional[AthenaConfig] = None
+
 @dataclass
-class HCO:
-    raw: Raw = field(default_factory=Raw)
-    trusted: Trusted = field(default_factory=Trusted)
-    enriched: Enriched = field(default_factory=Enriched)
-    def __getitem__(self, key):
-        return getattr(self, key)
-    def __iter__(self):
-        return iter(self.__dict__)
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
-    
+class TargetConfig:
+    api: Optional[ApiConfig] = None
+    athena: Optional[AthenaConfig] = None
+    file: Optional[FileConfig] = None
+
 @dataclass
-class HCP:
-    raw: Raw = field(default_factory=Raw)
-    trusted: Trusted = field(default_factory=Trusted)
-    enriched: Enriched = field(default_factory=Enriched)
-    def __getitem__(self, key):
-        return getattr(self, key)
-    def __iter__(self):
-        return iter(self.__dict__)
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
-    
+class Resource:
+    id: str
+    source: SourceConfig
+    target: TargetConfig
+
 @dataclass
-class DNB:
-    hco: HCO = field(default_factory=HCO)
-    hcp: HCP = field(default_factory=HCP)
-    def __getitem__(self, key):
-        return getattr(self, key)
-    def __iter__(self):
-        return iter(self.__dict__)
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+class Resources:
+    resources: List[Resource] = field(default_factory=list)
+
 @dataclass
-class SAP:
-    hco: HCO = field(default_factory=HCO)
-    hcp: HCP = field(default_factory=HCP)
-    def __getitem__(self, key):
-        return getattr(self, key)
-    def __iter__(self):
-        return iter(self.__dict__)
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+class Stage:
+    raw: Optional[Resources] = None
+    trusted: Optional[Resources] = None
+    enriched: Optional[Resources] = None
+
+@dataclass
+class Entity:
+    hco: Stage = field(default_factory=Stage)
+    hcp: Stage = field(default_factory=Stage)
 
 @dataclass
 class Pipeline:
-    sap: SAP = field(default_factory=SAP)
-    dnb: DNB = field(default_factory=DNB)
-    def __getitem__(self, key):
-        return getattr(self, key)
-    def __iter__(self):
-        return iter(self.__dict__)
+    dnb: Entity = field(default_factory=Entity)
+    sap: Entity = field(default_factory=Entity)
+    sfdc: Entity = field(default_factory=Entity)
 
-    def to_dict(self) -> Dict[str, Any]:
-        return asdict(self)
+def create_pipeline(config: Dict[str, Any]) -> Pipeline:
+    """Create Pipeline instance from config dictionary"""
+    pipeline = Pipeline()
     
-
-
-# TODO: The below code needs to be commented out before each code push
-
-def load_pipeline_from_yaml(file_path: str) -> Pipeline:
-    with open(file_path, 'r') as yaml_file:
-        config_data = yaml.safe_load(yaml_file)
-    return Pipeline(**config_data)
-
-# Load the YAML file and display the dictionary
-pipeline = load_pipeline_from_yaml('/workspaces/mdm/metadata/config_dev.yaml')
-print(pipeline)
-# output_path = '/workspaces/mdm/metadata/config_dev.json'
-# with open(output_path, 'w') as json_file:
-#     json.dump(pipeline.to_dict(), json_file, indent=4)
-# pip_dict  = pipeline.to_dict()
-# print(pip_dict)
-print('#################### WRITE MAPPER TO FIX THE BELOW ISSUE ###################')
-print(pipeline.sap)
-print('#################### WRITE MAPPER TO FIX THE BELOW ISSUE ###################')
-print(pipeline.dnb)
-
-# print(Pipeline)
-# Convert pip_dict back into a Pipeline object
-# def dict_to_pipeline(data: Dict[str, Any]) -> Pipeline:
-#     def recursive_dataclass(cls, data):
-#         if isinstance(data, dict):
-#             fields = {field.name: field.type for field in cls.__dataclass_fields__.values()}
-#             return cls(**{key: recursive_dataclass(fields[key], value) if key in fields else value for key, value in data.items()})
-#         return data
-
-#     return recursive_dataclass(Pipeline, data)
-
-# pipeline_object = dict_to_pipeline(pip_dict)
-# print(pipeline_object)
-
-
-
+    for source in ['dnb', 'sap', 'sfdc']:
+        if source not in config:
+            continue
+            
+        for entity in ['hco', 'hcp']:
+            if entity not in config[source]:
+                continue
+                
+            for stage in ['raw', 'trusted', 'enriched']:
+                stage_data = config[source][entity].get(stage)
+                if not stage_data:
+                    continue
+                
+                resources_container = Resources()
+                
+                if 'resources' in stage_data:
+                    for resource_data in stage_data['resources']:
+                        source_config = SourceConfig(
+                            api=ApiConfig(**resource_data['source']['api']) 
+                                if resource_data.get('source', {}).get('api') else None,
+                            athena=AthenaConfig(**resource_data['source']['athena'])
+                                if resource_data.get('source', {}).get('athena') else None,
+                            file=FileConfig(**resource_data['source']['file'])
+                                if resource_data.get('source', {}).get('file') else None
+                        )
+                        
+                        target_config = TargetConfig(
+                            api=ApiConfig(**resource_data['target']['api'])
+                                if resource_data.get('target', {}).get('api') else None,
+                            athena=AthenaConfig(**resource_data['target']['athena'])
+                                if resource_data.get('target', {}).get('athena') else None,
+                            file=FileConfig(**resource_data['target']['file'])
+                                if resource_data.get('target', {}).get('file') else None
+                        )
+                        
+                        resource = Resource(
+                            id=resource_data['id'],
+                            source=source_config,
+                            target=target_config
+                        )
+                        resources_container.resources.append(resource)
+                
+                setattr(getattr(getattr(pipeline, source), entity), stage, resources_container)
+    
+    return pipeline

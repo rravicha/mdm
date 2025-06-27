@@ -1,0 +1,58 @@
+
+adl-raw-gbl-cf-customer-mdm-dnb-sfn-dev  raw/FS_DNB/ | adl_raw_gbl_cf_customer_mdm.ebx_hierarchy_dunandbradstreetaccounts"
+adl-raw-gbl-cf-customer-mdm-sap-sfn-dev  raw/FS_SAP_DC_CUST/dim_customer | adl_raw_gbl_cf_customer_mdm.dim_customer"
+adl-raw-gbl-cf-customer-mdm-sfdc-sfn-dev raw/FS_SFDC_ACC_CUST/dim_account, raw/FS_SFDC_ACC_CUST/dim_address_vod__c
+adl_raw_gbl_cf_customer_mdm.dim_account
+adl_raw_gbl_cf_customer_mdm.dim_address_vod__c"
+adl-trusted-gbl-cf-customer-mdm-dnb-sfn-dev location 
+trusted/FS_DNB/dnb_cust_addr_comb
+
+adl_trusted_gbl_cf_customer_mdm.dnb_cust_addr_comb"
+adl-trusted-gbl-cf-customer-mdm-sap-sfn-dev location 
+trusted/FS_SAP_DC_CUST/hcp_cust_addr_comb
+trusted/FS_SAP_DC_CUST/hco_cust_addr_comb
+
+adl_trusted_gbl_cf_customer_mdm.sap_hcp_cust_addr_comb
+adl_trusted_gbl_cf_customer_mdm.sap_hco_cust_addr_comb"
+adl-trusted-gbl-cf-customer-mdm-sfdc-sfn-dev location 
+trusted/FS_SFDC_ACC_CUST/hcp_comb
+trusted/FS_SFDC_ACC_CUST/hco_comb
+
+adl_trusted_gbl_cf_customer_mdm.sfdc_hcp_comb
+adl_trusted_gbl_cf_customer_mdm.sfdc_hco_comb
+adl-enriched-gbl-cf-customer-mdm-dnb-sfn-dev | enriched/FS_DNB
+adl-enriched-gbl-cf-customer-mdm-sap-hcp-sfn-dev | enriched/FS_SAP_DC_CUST/hcp_sap_json
+adl-enriched-gbl-cf-customer-mdm-sap-hco-sfn-dev | enriched/FS_SAP_DC_CUST/hco_sap_json/
+adl-enriched-gbl-cf-customer-mdm-sfdc-hcp-sfn-dev | enriched/FS_SFDC_ACC_CUST/hcp_comb/
+adl-enriched-gbl-cf-customer-mdm-sfdc-hco-sfn-dev | enriched/FS_SFDC_ACC_CUST/hco_comb
+adl-enriched-gbl-cf-customer-mdm-dnb-hco-api-sfn-dev | enriched/FS_DNB
+adl-enriched-gbl-cf-customer-mdm-sap-hcp-api-sfn-dev | enriched/FS_SAP_DC_CUST/hcp_sap_json/
+adl-enriched-gbl-cf-customer-mdm-sap-hco-api-sfn-dev | enriched/FS_SAP_DC_CUST/hco_sap_json/
+adl-enriched-gbl-cf-customer-mdm-sfdc-hcp-api-sfn-dev | enriched/FS_SFDC_ACC_CUST/hcp_comb/
+adl-enriched-gbl-cf-customer-mdm-sfdc-hco-api-sfn-dev | enriched/FS_SFDC_ACC_CUST/hco_comb/
+
+adl-enriched-gbl-cf-customer-mdm-out-hcp-api-sfn-dev | /raw/Reltio/HCP/manifest.json | /raw/Reltio/HCP/unzipped/*.json
+adl-enriched-gbl-cf-customer-mdm-out-hco-api-sfn-dev | /raw/Reltio/HCO/manifest.json | /raw/Reltio/HCO/unzipped/*.json
+adl-enriched-gbl-cf-customer-mdm-out-hcp-addr-api-sfn-dev | /raw/Reltio/HCP_ADDR/manifest.json | /raw/Reltio/HCP_ADDR/unzipped/*.json
+adl-enriched-gbl-cf-customer-mdm-out-hco-addr-api-sfn-dev | /raw/Reltio/HCO_ADDR/manifest.json | /raw/Reltio/HCO_ADDR/unzipped/*.json
+
+adl-raw-gbl-cf-customer-mdm-dnb-sfn-dev
+adl-raw-gbl-cf-customer-mdm-sap-sfn-dev
+adl-raw-gbl-cf-customer-mdm-sfdc-sfn-dev
+adl-trusted-gbl-cf-customer-mdm-dnb-sfn-dev
+adl-trusted-gbl-cf-customer-mdm-sap-sfn-dev
+adl-trusted-gbl-cf-customer-mdm-sfdc-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-dnb-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sap-hcp-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sap-hco-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sfdc-hcp-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sfdc-hco-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-dnb-hco-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sap-hcp-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sap-hco-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sfdc-hcp-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-sfdc-hco-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-out-hcp-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-out-hco-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-out-hcp-addr-api-sfn-dev
+adl-enriched-gbl-cf-customer-mdm-out-hco-addr-api-sfn-dev

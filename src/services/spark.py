@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 
-class SparkService:
+class Spark:
 
     @staticmethod
     def get_spark_session() -> SparkSession:

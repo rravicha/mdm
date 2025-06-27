@@ -1,84 +1,73 @@
 dnb:
   hco:
     raw:
-      resource:
-        source:
-          database: adl_enriched_gbl_cf_ebx
-          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
-          type: athena
-        target:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: null
-          prefix: /raw/FS_DNB/
-          type: file
-    trusted:
-      resource:
-        source:
-          database: adl_enriched_gbl_cf_ebx
-          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
-          type: athena
-        target:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: null
-          prefix: /raw/FS_DNB/
-          type: file
+      resources:
+        - id: "dnb_hco_1"
+          source:
+            api: null
+            file: null
+            athena:
+              database: test
+              table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts1
+              type: athena
+              query: |
+                SELECT * FROM ebx_hierarchy_hierarchy_dunAndBradstreetAccounts1
+                WHERE hierarchyType = 'DUNS'
+          target:
+            api: null
+            athena: null
+            file:
+              bucket: adl-base-customer-mdm-etl-dev-226aog
+              prefix: /raw/FS_DNB1/
+              type: s3
+              format: parquet
+              file_name: null
+        - id: "dnb_hco_2"
+          source:
+            api: null
+            file: null
+            athena:
+              database: test
+              table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts2
+              type: athena
+              query: |
+                SELECT * FROM ebx_hierarchy_hierarchy_dunAndBradstreetAccounts2
+                WHERE hierarchyType = 'DUNS'
+          target:
+            api: null
+            athena: null
+            file:
+              bucket: adl-base-customer-mdm-etl-dev-226aog
+              prefix: /raw/FS_DNB2/
+              type: s3
+              format: parquet
+              file_name: null
+    trusted: null
+    enriched: null
+  hcp:
+    raw: null
+    trusted: null
+    enriched: null
 sap:
-  hco:
-    raw:
-      resource:
-        source:
-          database: adl_enriched_gbl_cf_ebx
-          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
-          type: athena
-        target:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: null
-          prefix: /raw/FS_DNB/
-          type: file
-    trusted:
-      resource:
-        source:
-          database: adl_enriched_gbl_cf_ebx
-          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
-          type: athena
-        target:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: null
-          prefix: /raw/FS_DNB/
-          type: file
   hcp:
     raw:
-      resource:
-        source:
-          database: adl_enriched_gbl_cf_ebx
-          table: ebx_hierarchy_hierarchy_dunAndBradstreetAccounts
-          type: athena
-        target:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: null
-          prefix: /raw/FS_DNB/
-          type: file
-    trusted:
-      resource:
-        source:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: "metdata.json"
-          prefix: /raw/FS_DNB/
-          type: athena
-          query: "SELECT * FROM adl_enriched_gbl_cf_ebx.ebx_hierarchy_hierarchy_dunAndBradstreetAccounts WHERE entityType = 'HCP'"
-        target:
-          type: api
-          secrets: adl-customer-mdm-secret-dev
-          url : https://dev.api.alcon.com/reltio-exp-sys/api/triggerLoad
-    enriched:
-      resource:
-        source:
-          bucket: adl-base-customer-mdm-etl-dev-226aog
-          file_name: "metdata.json"
-          prefix: /raw/FS_DNB/
-          type: athena
-          query: "SELECT * FROM adl_enriched_gbl_cf_ebx.ebx_hierarchy_hierarchy_dunAndBradstreetAccounts WHERE entityType = 'HCP'"
-        target:
-          type: "Mulesoft API"
-          secrets: adl-customer-mdm-secret-dev
-          url : https://dev.api.alcon.com/reltio-exp-sys/api/triggerLoad
+      resources:
+        - id: "sap_hcp_1"
+          source:
+            api:
+              s3_prefix: enriched/FS_SAP_DC_CUST/API_TESTING/
+    trusted: null
+    enriched: null
+  hco:
+    raw: null
+    trusted: null
+    enriched: null
+sfdc:
+  hcp:
+    raw: null
+    trusted: null
+    enriched: null
+  hco:
+    raw: null
+    trusted: null
+    enriched: null
